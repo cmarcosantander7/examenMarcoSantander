@@ -26,6 +26,7 @@ public class ProductoServiceImpl implements ProductoService{
     @Override
     public Producto save(Producto producto) {
         producto.setValor_compra(producto.getCantidad()*producto.getPrecio());
+
         if(producto.getValor_compra()>50){
             Double descuento= (producto.getValor_compra()*0.10);
             Double iva= (producto.getValor_compra()*0.12);

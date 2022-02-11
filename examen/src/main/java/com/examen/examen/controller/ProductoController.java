@@ -21,7 +21,12 @@ public class ProductoController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Producto producto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(productoService.save(producto));
+        if(producto.getCantidad() >0 && producto.getPrecio() >0){
+            return ResponseEntity.status(HttpStatus.CREATED).body(productoService.save(producto));
+        }else{
+            return ResponseEntity.badRequest().body("Cantidad y Precio deben ser mayores a 0 (cero)");
+        }
+
     }
 
     @GetMapping("/{id}")
@@ -37,14 +42,21 @@ public class ProductoController {
         Optional<Producto> user= productoService.findById(id);
         if(!user.isPresent()){
             return ResponseEntity.notFound().build();
+        }else{
+            if(userDetails.getCantidad() >0 && userDetails.getPrecio() >0){
+                user.get().setDescripcion(userDetails.getDescripcion());
+                user.get().setPrecio(userDetails.getPrecio());
+                user.get().setCantidad(userDetails.getCantidad());
+
+
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(productoService.save(user.get()));
+            }else{
+                return ResponseEntity.badRequest().body("Cantidad y Precio deben ser mayores a 0 (cero)");
+            }
         }
-        user.get().setDescripcion(userDetails.getDescripcion());
-        user.get().setPrecio(userDetails.getPrecio());
-        user.get().setCantidad(userDetails.getCantidad());
 
 
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(productoService.save(user.get()));
     }
 
     @DeleteMapping("/{id}")
